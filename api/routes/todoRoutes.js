@@ -27,7 +27,7 @@ module.exports = (app, db) => {
         const task = {
           name: req.body.name, status: req.body.status, created_date: req.body.created_date
         };
-        db.collection('todo').insert(task, (err, result) => {
+        db.collection('todo').insertOne(task, (err, result) => {
             if (err) {
                 res.send({ 'error' : 'An error has occured' });
             } else {
