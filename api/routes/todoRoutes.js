@@ -1,4 +1,3 @@
-var ObjectID = require('mongodb').ObjectID;
 const todo = require('../controllers/todoController.js');
 
 module.exports = (app, db) => {
