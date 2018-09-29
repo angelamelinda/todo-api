@@ -2,57 +2,63 @@
 // const Task = mongoose.model("Tasks");
 
 // // get all tasks
-// exports.getTasks = (req, res) => {
-//     Task.find({}, (err, task) => {
-//         if (err) 
-//             res.send(err);
-        
-//             res.json(task);
-//     })
-// }
+exports.getTasks = (req, res) => {
+    db.collection('todo').find().toArray(function (err, item) {
+      if (err) {
+        res.send({'error':'An error has occurred'});
+      } else {
+        res.send(item);
+      }
+    });
+};
 
-// // create task
+exports.getTask = (req, res) => {
+    const id = req.params.id;
+    const details = { '_id': new ObjectID(id) };
+    db.collection('todo').findOne(details, (err, item) => {
+      if (err) {
+        res.send({'error':'An error has occurred'});
+      } else {
+        res.send(item);
+      }
+    });
+}
 
-// exports.createTask = (req, res) => {
-//     let newTask = new Task(req.body);
-//     newTask.save( (err, task) => {
-//         if (err) 
-//             res.send(err);
-        
-//         res.json(task);
-//     })
-// }
+exports.addTask = (req, res) => {
+    const task = {
+      name: req.body.name, status: req.body.status, created_date: req.body.created_date
+    };
+    db.collection('todo').insertOne(task, (err, result) => {
+        if (err) {
+            res.send({ 'error' : 'An error has occured' });
+        } else {
+            res.send(result.ops[0])
+        }
+    })
+}
 
-// // read a single task
-// exports.readTask = (req, res) => {
-//     Task.findById(req.params.id, (err, task) => {
-//         if (err) 
-//             res.send(err);
-        
-//         res.json(task);
-//     })
-// }
-
-// // update task
-
-// exports.updateTask = (req, res) => {
-//     Task.findOneAndUpdate(req.params.id, req.body, { new: true}), (err, task) => {
-//         if (err) 
-//             res.send(err);
-        
-//         res.json(task);
-//     }
-// }
-
-// // delete task
-
-// exports.deleteTask = (req, res) => {
-//     Task.remove({
-//         _id: req.params.id
-//     }, (err, task) => {
-//         if (err) 
-//             res.send(err);
-        
-//         res.json({ message: 'Task deleted!'});
-//     })
-// }
+exports.deleteTask = (req, res) => {
+    const id = req.params.id;
+    const details = { '_id': new ObjectID(id) };
+    db.collection('todo').deleteOne(details, (err, item) => {
+      if (err) {
+        res.send({'error':'An error has occurred'});
+      } else {
+        res.send('Task ' + id + ' deleted!');
+      } 
+    });
+}
+exports.editTask = (req, res) => {
+    const id = req.params.id;
+    const details = { '_id': new ObjectID(id) };
+    const task = {
+        name: req.body.name, status: req.body.status, created_date: req.body.created_date
+    };
+    db.collection('todo').updateOne(details, {$set: task}, (err, result) => {
+      if (err) {
+          res.send({'error':'An error has occurred'});
+      } else {
+          res.send(task);
+      } 
+    });
+  }
